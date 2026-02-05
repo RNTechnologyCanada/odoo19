@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e
 
-echo "Starting Odoo 19 Community..."
-
-exec odoo \
-  --db_host=$DB_HOST \
-  --db_port=$DB_PORT \
-  --db_user=$DB_USER \
-  --db_password=$DB_PASSWORD
+# Use env vars for DB connection
+odoo -c /etc/odoo/odoo.conf --db_host=$POSTGRES_HOST --db_port=$POSTGRES_PORT \
+--db_user=$POSTGRES_USER --db_password=$POSTGRES_PASSWORD --workers=0

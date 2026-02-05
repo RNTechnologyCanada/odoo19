@@ -1,37 +1,37 @@
-# Python cache and compiled files
+# Python cache
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
 *.pyd
 
-# Odoo database and sessions
-*.db
-*.sqlite
+# Odoo logs
 *.log
-*.pid
+odoo.log
 
-# Docker and environment
+# Environment variables
 .env
-*.env
-docker-compose.override.yml
+
+# Local configuration
+odoo.conf
+config/odoo.conf
+
+# Docker
 *.pid
 *.sock
+*.sqlite3
+docker-compose.override.yml
+*.env
 
-# Node and frontend
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# Odoo addons (ignore local extra-addons folder)
-/mnt/extra-addons/
-
-# IDE/editor files
-.vscode/
-.idea/
-*.swp
-*.swo
+# OS files
 .DS_Store
+Thumbs.db
 
-# Build artifacts
-dist/
-build/
+# VS Code settings
+.vscode/
+
+# Node modules (if any frontend work)
+node_modules/
+
+# Misc
+*.bak
+*.swp
