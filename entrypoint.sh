@@ -1,34 +1,29 @@
 #!/bin/bash
 set -e
 
-# Print the port
-echo "Render PORT is: $PORT"
+echo "Render PORT is: ${PORT}"
+echo "DB: ${ODOO_DB_NAME} @ ${ODOO_DB_HOST}:${ODOO_DB_PORT}"
 
-# Default DB values if not set
-: "${ODOO_DB_NAME:=odoo_db}"
-: "${ODOO_DB_USER:=odoo_user}"
-: "${ODOO_DB_PASSWORD:=odoo_pass}"
-: "${ODOO_DB_HOST:=db}"
-: "${ODOO_DB_PORT:=5432}"
+# 1) Initialize DB if not initialized yet
+# (This is safe to run each deploy: if already initialized, it won't break.)
+odoo \
+  --config=/etc/odoo/odoo.conf \
+  -d "${ODOO_DB_NAME}" \
+  -i base \
+  --without-demo=all \
+  --stop-after-init \
+  --db_host="${ODOO_DB_HOST}" \
+  --db_port="${ODOO_DB_PORT}" \
+  --db_user="${ODOO_DB_USER}" \
+  --db_password="${ODOO_DB_PASSWORD}"
 
-# Export PGPASSWORD for psql commands
-export PGPASSWORD="$ODOO_DB_PASSWORD"
-
-# Check if the database exists
-DB_EXISTS=$(psql -h "$ODOO_DB_HOST" -U "$ODOO_DB_USER" -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$ODOO_DB_NAME';")
-
-if [ "$DB_EXISTS" != "1" ]; then
-    echo "Database $ODOO_DB_NAME does not exist. Creating..."
-    createdb -h "$ODOO_DB_HOST" -U "$ODOO_DB_USER" "$ODOO_DB_NAME"
-    echo "Database created."
-fi
-
-echo "Initializing Odoo database (base module)..."
-
-# Run Odoo
+echo "Starting Odoo..."
+# 2) Start server
 exec odoo \
   --config=/etc/odoo/odoo.conf \
-  -i base \
-  --without-demo=True \
-  --http-port="$PORT" \
-  --http-interface=0.0.0.0
+  -d "${ODOO_DB_NAME}" \
+  --http-port="${PORT}" \
+  --db_host="${ODOO_DB_HOST}" \
+  --db_port="${ODOO_DB_PORT}" \
+  --db_user="${ODOO_DB_USER}" \
+  --db_password="${ODOO_DB_PASSWORD}"
