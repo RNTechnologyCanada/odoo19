@@ -6,8 +6,7 @@ COPY ./addons /mnt/extra-addons
 # Copy configuration
 COPY ./config/odoo.conf /etc/odoo/odoo.conf
 
-# Set entrypoint
-COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
+# Copy entrypoint and set permissions at the same time
+COPY --chmod=755 ./entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
+
